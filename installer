@@ -1,0 +1,43 @@
+#!/bin/bash
+
+# set up internet first!
+
+$NAME="server"
+$PASSWORD="password"
+
+set -e
+
+if [ "$(id -u)" != "0" ]; then
+   echo "This script must be run as root" 1>&2
+   exit 1
+fi
+
+rmmod pcspkr & echo "blacklist pcspkr" > /etc/modprobe.d/nobeep.conf
+
+sed -i '/\[lib32\]/s/^#//g' /etc/pacman.conf
+sed -i '/^#Include/s/^#//g' /etc/pacman.conf
+pacman -R sudo || :
+pacman --noconfirm --disable-download-timeout -Syu nano tmux man sshpass git doas tree xonsh openssh openssh-openrc wget docker mlocate docker-compose docker-openrc
+
+useradd $NAME -G wheel
+echo -e "permit :wheel\npermit nopass $NAME" > /etc/doas.conf
+echo "$NAME:$PASSWORD" | chpasswd
+
+mkdir -p /root/Scripts/ /home/$NAME/Scripts/ /home/$NAME/docker_containers/ /home/$NAME/.ssh/
+
+cp -r ./root_scripts/* /root/Scripts/
+cp ./startup-service /etc/init.d/
+
+rm -r /etc/bash
+cp -r ./bash /etc/bash
+
+ssh-keygen -f "/home/$NAME/.ssh/id_rsa" -P ""
+
+rc-update add docker
+rc-update add sshd
+rc-update add startup-service
+rc-service docker start
+rc-service sshd start
+rc-service startup-service start
+
+su - $NAME
