@@ -2,8 +2,8 @@
 
 # set up internet first!
 
-$NAME="server"
-$PASSWORD="password"
+NAME="server"
+PASSWORD="password"
 
 set -e
 
@@ -16,10 +16,11 @@ rmmod pcspkr & echo "blacklist pcspkr" > /etc/modprobe.d/nobeep.conf
 
 sed -i '/\[lib32\]/s/^#//g' /etc/pacman.conf
 sed -i '/^#Include/s/^#//g' /etc/pacman.conf
-pacman -R sudo || :
-pacman --noconfirm --disable-download-timeout -Syu nano tmux man sshpass git doas tree xonsh openssh openssh-openrc wget docker mlocate docker-compose docker-openrc
+pacman --noconfirm -R sudo || :
+pacman --noconfirm --disable-download-timeout -Syu zip unzip nano tmux man sshpass git doas tree xonsh openssh openssh-openrc wget docker mlocate docker-compose docker-openrc
 
-useradd $NAME -G wheel
+groupadd $NAME
+useradd -g $NAME -G wheel $NAME
 echo -e "permit :wheel\npermit nopass $NAME" > /etc/doas.conf
 echo "$NAME:$PASSWORD" | chpasswd
 

@@ -1,21 +1,19 @@
 #!/bin/bash
 
+set -e
+
 if [ "$#" -ne 2 ]; then
-    echo "Usage: set-static-ip interface_name ip_address"
+    echo "Usage: $0 interface_name ip_address"
     exit 1
 fi
 
 interface=$1
 ip=$2
+gateway=192.168.1.1
+dns="1.1.1.1 1.0.0.1 8.8.8.8"
 
-gateway="192.168.1.1"
-dns_servers="1.1.1.1 1.0.0.1"
-
-echo "Configuring $interface with static IP $ip..."
-echo "config_$interface="$ip"" >> /etc/conf.d/net
-echo "routes_$interface="default via $gateway"" >> /etc/conf.d/net
-echo "dns_servers_$interface="$dns_servers"" >> /etc/conf.d/net
-
-echo "Restarting network..."
-rc-service network restart
-echo "Static IP configuration complete."
+ip address add $ip dev $interface
+ip route add default via $gateway dev $interface
+echo "nameserver $dns" > /etc/resolv.conf
+ip link set $interface up
+echo "Static IP successfully configured for interface $interface"
