@@ -15,7 +15,8 @@ ssid=$2
 password=$3
 
 rfkill unblock wifi
+ip link set "$interface" up
 wpa_passphrase "$ssid" "$password" > /tmp/wpa_supplicant.conf
 wpa_supplicant -B -Dwext -i "$interface" -c /tmp/wpa_supplicant.conf
 sleep 5
-dhclient "$interface"
+dhcpcd &
