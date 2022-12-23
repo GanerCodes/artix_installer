@@ -1,6 +1,27 @@
 #!/bin/bash
 
-doas pacman -S gcc go xorg xf86-video mesa
-cd dwm_6_3
-./make
+set -e
+
+NAME="desktop"
+PASSWORD="password"
+
+cat > ./tmpscript << EOF
+set -e
+/root/Scripts/add_user $NAME $PASSWORD
+usermod -a -G video,audio $NAME
+mkdir -p /home/$NAME/Scripts
+yes | pacman --noconfirm --disable-download-timeout -Syu xorg-xbacklight pulseaudio-alsa pamixer playerctl brave-bin neofetch go xorg libx11 libxft mesa xorg-xbacklight
+cp ./Scripts/* /home/$NAME/Scripts
+chown -R $NAME /home/$NAME
+chgrp -R $NAME /home/$NAME
+EOF
+chmod +x ./tmpscript
+doas ./tmpscript
+rm ./tmpscript
+
+cd dwm_6_3 && ./make
+cd ../slstatus && ./make
+cd ../dmenu-5.1 && ./make
+cd ../st && ./make
+cd ../ly && ./make
 cd ..
