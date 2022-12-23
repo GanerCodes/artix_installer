@@ -20,7 +20,7 @@ wget https://gitea.artixlinux.org/packagesA/artix-mirrorlist/raw/branch/master/t
 (sed 's/#//g' <(grep Server <(curl "https://archlinux.org/mirrorlist/?country=US&protocol=http&protocol=https&ip_version=4&use_mirror_status=on"))) > /etc/pacman.d/mirrorlist-arch
 rm /etc/pacman.conf
 cp ./pacman.conf /etc/pacman.conf
-pacman --noconfirm --disable-download-timeout -Syu zip unzip nano tmux man sshpass git doas tree xonsh openssh openssh-openrc wget docker mlocate docker-compose docker-openrc
+pacman --noconfirm --disable-download-timeout -Syu artix-archlinux-support zip unzip nano tmux man sshpass git doas tree xonsh openssh openssh-openrc wget docker mlocate docker-compose docker-openrc
 
 mkdir -p /root/Scripts/ /home/$NAME/Scripts/ /home/$NAME/docker_containers/ /home/$NAME/.ssh/
 cp -r ./root_scripts/* /root/Scripts/
