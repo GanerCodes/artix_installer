@@ -32,6 +32,9 @@ cp ./startup-service /etc/init.d/
 rm -r /etc/bash
 cp -r ./bash /etc/bash
 
+chown -R $NAME /home/$NAME
+chgrp -R $NAME /home/$NAME
+
 ssh-keygen -f "/home/$NAME/.ssh/id_rsa" -P ""
 
 rc-update add docker

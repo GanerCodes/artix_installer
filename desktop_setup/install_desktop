@@ -1,0 +1,6 @@
+#!/bin/bash
+
+doas pacman -S gcc go xorg xf86-video mesa
+cd dwm_6_3
+./make
+cd ..
