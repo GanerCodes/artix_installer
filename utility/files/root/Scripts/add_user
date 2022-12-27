@@ -7,5 +7,4 @@ NAME=$1
 PASSWORD=$2
 groupadd $NAME
 useradd -g $NAME -G wheel $NAME
-echo -e "permit :wheel\npermit nopass $NAME" > /etc/doas.conf
 echo "$NAME:$PASSWORD" | chpasswd

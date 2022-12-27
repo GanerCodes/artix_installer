@@ -1,10 +1,9 @@
 #!/bin/bash
 
 dir="/run/user/1000/kio-fuse-FMThMr/smb/root@192.168.1.44/Gentoo/personal/rust_website/files/random"
-name="de_installer.zip"
+name="installer.zip"
 
-cd desktop_setup
-zip -r $name *
+zip -r $name ./utility
 dest="$dir/$name"
 
 rm "$dest"

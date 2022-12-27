@@ -1,0 +1,5 @@
+#!/bin/bash
+folder="artix"
+
+mkdir "$folder"
+qemu-img create -f qcow2 "$folder/drive.qcow2" 10G

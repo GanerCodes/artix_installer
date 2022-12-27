@@ -2,41 +2,31 @@
 
 # set up internet first!
 
-NAME="server"
 PASSWORD="password"
 
 set -e
 
-if [ "$(id -u)" != "0" ]; then
-   echo "This script must be run as root" 1>&2
-   exit 1
-fi
-
 rmmod pcspkr & echo "blacklist pcspkr" > /etc/modprobe.d/nobeep.conf
-pacman --noconfirm -R sudo || :
-
+pacman --noconfirm -R sudo
 pacman --noconfirm -S wget
-wget https://gitea.artixlinux.org/packagesA/artix-mirrorlist/raw/branch/master/trunk/mirrorlist -O /etc/pacman.d/mirrorlist
-(sed 's/#//g' <(grep Server <(curl "https://archlinux.org/mirrorlist/?country=US&protocol=http&protocol=https&ip_version=4&use_mirror_status=on"))) > /etc/pacman.d/mirrorlist-arch
-rm /etc/pacman.conf
-cp ./pacman.conf /etc/pacman.conf
-pacman --noconfirm --disable-download-timeout -Syu artix-archlinux-support zip unzip nano tmux man sshpass git doas tree xonsh openssh openssh-openrc wget docker mlocate docker-compose docker-openrc
-
-mkdir -p /root/Scripts/ /home/$NAME/Scripts/ /home/$NAME/docker_containers/ /home/$NAME/.ssh/
-cp -r ./root_scripts/* /root/Scripts/
-
-echo "permit nopass ::wheel" >> /etc/doas.conf
-/root/Scripts/add_user "$NAME" "$PASSWORD"
-
-cp ./startup-service /etc/init.d/
 
 rm -r /etc/bash
-cp -r ./bash /etc/bash
+cp -r ./files/* /
 
-chown -R $NAME /home/$NAME
-chgrp -R $NAME /home/$NAME
+wget https://gitea.artixlinux.org/packagesA/artix-mirrorlist/raw/branch/master/trunk/mirrorlist -O /etc/pacman.d/mirrorlist
+(sed 's/#//g' <(grep Server <(curl "https://archlinux.org/mirrorlist/?country=US&protocol=http&protocol=https&ip_version=4&use_mirror_status=on"))) > /etc/pacman.d/mirrorlist-arch
+pacman --noconfirm --disable-download-timeout -Syu artix-archlinux-support zip unzip nano tmux man sshpass git doas tree xonsh openssh openssh-openrc wget docker mlocate docker-compose docker-openrc
+pacman-key --populate archlinux
+pacman-key --populate artix
 
-ssh-keygen -f "/home/$NAME/.ssh/id_rsa" -P ""
+echo "permit nopass keepenv :wheel" >> /etc/doas.conf
+usermod -a -G wheel root
+/root/Scripts/add_user server "$PASSWORD"
+
+chown -R server /home/server
+chgrp -R server /home/server
+
+ssh-keygen -f "/home/server/.ssh/id_rsa" -P ""
 
 rc-update add docker
 rc-update add sshd
@@ -45,4 +35,4 @@ rc-service docker start
 rc-service sshd start
 rc-service startup-service start
 
-su - $NAME
+su - server

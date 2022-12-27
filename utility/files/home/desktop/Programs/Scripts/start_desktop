@@ -1,0 +1,11 @@
+#!/bin/bash
+
+export DISPLAY=:0
+
+doas Xorg &
+until xset -q
+do
+  sleep 0.1
+done
+
+dwm &
