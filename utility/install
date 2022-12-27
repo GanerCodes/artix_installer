@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# set up internet first!
+# Set up internet first!
 
 PASSWORD="password"
 

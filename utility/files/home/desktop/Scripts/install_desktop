@@ -1,0 +1,21 @@
+#!/bin/bash
+
+# To be ran as 'server' user, for some reason
+
+set -e
+
+PASSWORD="password"
+
+doas /root/Scripts/add_user desktop $PASSWORD
+doas usermod -a -G video,audio desktop
+yes | doas pacman --noconfirm --disable-download-timeout -Syu xorg-xbacklight pulseaudio-alsa pamixer playerctl brave-bin neofetch go xorg libx11 libxft mesa xorg-xbacklight
+
+cd /home/desktop/Programs/dwm_6_3 && ./make
+cd ../slstatus && ./make
+cd ../dmenu-5.1 && ./make
+cd ../st && ./make
+cd ../ly && ./make
+cd
+
+chown -R desktop /home/desktop
+chgrp -R desktop /home/desktop
