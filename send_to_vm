@@ -1,9 +1,9 @@
 #!/bin/bash
 
-dir="/run/user/1000/kio-fuse-FMThMr/smb/root@192.168.1.44/Gentoo/personal/rust_website/files/random"
-name="installer.zip"
+dir="/run/user/1000/kio-fuse-bETBEZ/smb/root@192.168.1.44/Gentoo/personal/rust_website/files/random"
+name="installer.tar.gz"
 
-zip -r $name ./utility
+tar -czf $name ./utility
 dest="$dir/$name"
 
 rm "$dest"

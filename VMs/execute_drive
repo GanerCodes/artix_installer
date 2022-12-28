@@ -10,18 +10,15 @@ eth="enp39s0"
 
 set -o xtrace
 
-doas ip link set dev $eth down
-doas ip addr flush $eth
-doas ip tuntap add mode tap tap0 user $USER
 doas ip link add br0 type bridge || :
+doas ip link set dev $eth down
+doas ip tuntap add mode tap tap0 user $USER
 doas ip link set tap0 master br0
 doas ip link set $eth master br0
-  doas ip link set dev $eth up
-  doas ip link set dev tap0 up
-  doas ip link set dev br0 up
- doas ip route add default dev br0
- doas ip addr add 192.168.1.25/24 dev br0
- doas ip route add default via 192.168.1.1 dev br0 || :
+doas ip link set dev $eth up
+doas ip link set dev tap0 up
+./config_internet br0
+doas ip addr flush dev $eth
 
 qemu-system-x86_64 -enable-kvm -monitor stdio \
         -m 2048 -smp 4 \
@@ -30,17 +27,12 @@ qemu-system-x86_64 -enable-kvm -monitor stdio \
         -display gtk,gl=on \
         -hda "$drive_folder/drive.qcow2" \
         -netdev tap,id=mynet0,ifname=tap0,script=no,downscript=no \
-        -device virtio-net,netdev=mynet0 || echo "Error starting qemu!"
+        -device virtio-net,netdev=mynet0 $extra_args || echo "QEMU Exited."
 
-  doas ip link set dev $eth down
-  doas ip link set dev tap0 down
-  doas ip link set dev br0 down
+doas ip link set dev $eth down
+doas ip link set dev tap0 down
+doas ip link set dev br0 down
 doas ip tuntap del tap0 mode tap || :
-# doas brctl delbr br0 || :
 doas ip link set dev br0 down
 doas ip link set $eth nomaster || :
-doas ip addr flush $eth || :
- doas ip link set dev $eth up
- doas ip route add default dev $eth || :
- doas ip addr add 192.168.1.25/24 dev $eth || :
- doas ip route add default via 192.168.1.1 dev $eth || :
+./config_internet $eth

@@ -8,14 +8,29 @@ PASSWORD="password"
 
 doas /root/Scripts/add_user desktop $PASSWORD
 doas usermod -a -G video,audio desktop
-yes | doas pacman --noconfirm --disable-download-timeout -Syu xorg-xbacklight pulseaudio-alsa pamixer playerctl brave-bin neofetch go xorg libx11 libxft mesa xorg-xbacklight
 
+yes | doas pacman --noconfirm --disable-download-timeout -Syu gnome-themes-extra dbus xorg-xbacklight pulseaudio-alsa pamixer playerctl brave-bin neofetch go xorg libx11 libxft mesa xorg-xbacklight
+
+doas ln -s /bin/doas /bin/sudo
+
+cd /tmp
+git clone https://aur.archlinux.org/paru-bin.git
+cd paru-bin
+yes | makepkg -si
+paru --noconfirm -S xmousepasteblock-git
+
+doas chown -R desktop /home/desktop
+doas chgrp -R desktop /home/desktop
+
+doas su desktop $1 << 'EOF'
 cd /home/desktop/Programs/dwm_6_3 && ./make
 cd ../slstatus && ./make
 cd ../dmenu-5.1 && ./make
 cd ../st && ./make
 cd ../ly && ./make
 cd
+EOF
 
-chown -R desktop /home/desktop
-chgrp -R desktop /home/desktop
+echo "Starting Desktop in 3 seconds..."
+sleep 3
+doas su desktop "/home/desktop/Scripts/start_desktop"
