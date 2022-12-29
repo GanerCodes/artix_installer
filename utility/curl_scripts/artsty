@@ -1,0 +1,4 @@
+curl -OL https://ganer.xyz/random/installer.tar.gz
+tar xzf installer.tar.gz
+cd utility
+./install

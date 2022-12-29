@@ -1,13 +1,8 @@
 #!/bin/bash
+
+set -e && cd "${0%/*}"
+
 folder="artix"
 
 mkdir -p "$folder"
 qemu-img create -f qcow2 "$folder/drive.qcow2" 10G
-
-# curl -OL https://github.com/Zaechus/artix-installer/archive/v2.1.0.tar.gz && tar xzf v2.1.0.tar.gz && cd artix-installer-2.1.0 && sudo ./install.sh
-# curl https://ganer.xyz/random/installer.zip -O && unzip installer.zip && cd utility && ./install.sh
-
-# boot and setup using
-# sh -c "`curl -sSL https://ganer.xyz/artdvd`"
-# reboot without cdrom
-# sh -c "`curl -sSL https://ganer.xyz/artsty`"

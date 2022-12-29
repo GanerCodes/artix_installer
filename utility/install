@@ -1,10 +1,8 @@
 #!/bin/bash
-
 # Set up internet first!
 
-PASSWORD="password"
-
-set -e
+set -e && cd "${0%/*}"
+PASSWORD=$([ "$1" ] && echo "$1" || echo "password")
 
 rmmod pcspkr & echo "blacklist pcspkr" > /etc/modprobe.d/nobeep.conf
 
@@ -19,12 +17,19 @@ pacman-key --populate artix
 pacman-key --populate archlinux
 ln -s /bin/doas /bin/sudo
 
-echo "permit nopass keepenv :wheel" >> /etc/doas.conf
+echo "permit nopass keepenv :wheel" > /etc/doas.conf
 usermod -a -G wheel root
 /root/Scripts/add_user server "$PASSWORD"
 
 chown -R server /home/server
 chgrp -R server /home/server
+
+su server $1 << 'EOF'
+cd /tmp
+git clone https://aur.archlinux.org/paru-bin.git
+cd paru-bin
+yes | makepkg -si
+EOF
 
 ssh-keygen -f "/home/server/.ssh/id_rsa" -P ""
 
