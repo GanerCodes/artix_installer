@@ -21,7 +21,7 @@ cd ../ly && ./make
 cd
 EOF
 
-doas rc-config add ly-openrc default
+doas rc-update add ly default
 
 echo "Starting Desktop in 3 seconds..."
 sleep 3
