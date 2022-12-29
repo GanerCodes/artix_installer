@@ -11,8 +11,6 @@ doas usermod -a -G video,audio desktop
 
 yes | doas pacman --noconfirm --disable-download-timeout -Syu gnome-themes-extra dbus xorg-xbacklight pulseaudio-alsa pamixer playerctl brave-bin neofetch go xorg libx11 libxft mesa xorg-xbacklight
 
-doas ln -s /bin/doas /bin/sudo
-
 cd /tmp
 git clone https://aur.archlinux.org/paru-bin.git
 cd paru-bin
@@ -30,6 +28,8 @@ cd ../st && ./make
 cd ../ly && ./make
 cd
 EOF
+
+doas rc-config add ly-openrc default
 
 echo "Starting Desktop in 3 seconds..."
 sleep 3
