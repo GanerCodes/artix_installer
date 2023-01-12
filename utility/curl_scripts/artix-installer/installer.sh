@@ -18,7 +18,6 @@ mkdir -p /mnt/artix/
 mount $root_part /mnt/artix
 mkdir -p /mnt/artix/boot /mnt/artix/root /mnt/artix/dev
 mount $boot_part /mnt/artix/boot
-mount --rbind /dev /mnt/artix/dev/
 
 packs=""
 [[ $(grep 'vendor' /proc/cpuinfo) == *"Intel"* ]] && packs="intel-ucode"
