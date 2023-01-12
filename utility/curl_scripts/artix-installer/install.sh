@@ -48,8 +48,10 @@ until [[ -f /usr/share/zoneinfo/$region_city ]]; do
     [[ ! $region_city ]] && region_city="America/Chicago"
 done
 
+[[ -d /sys/firmware/efi ]] && EFI=1
+
 installvars () {
-    echo my_disk=$my_disk swap_size=$swap_size boot_part=$boot_part swap_part=$swap_part root_part=$root_part encrypted=$encrypted region_city=$region_city cryptpass=$cryptpass root_password=$root_password
+    echo EFI=$EFI my_disk=$my_disk swap_size=$swap_size boot_part=$boot_part swap_part=$swap_part root_part=$root_part encrypted=$encrypted region_city=$region_city cryptpass=$cryptpass root_password=$root_password
 }
 
 sudo $(installvars) sh ./installer.sh

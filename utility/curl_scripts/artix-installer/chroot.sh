@@ -15,12 +15,15 @@ if [[ $encrypted == "y" ]]; then
     root_uuid=$(blkid $root_part -o value -s UUID)
     my_params="cryptdevice=UUID=$(echo $root_uuid):root root=$(echo $my_params)"
     sed -i '/GRUB_ENABLE_CRYPTODISK=y/s/^#//g' /etc/default/grub
-else
+fi
 
 sed -i "s/^GRUB_CMDLINE_LINUX_DEFAULT.*$/GRUB_CMDLINE_LINUX_DEFAULT=\"$my_params\"/g" /etc/default/grub
-
-grub-install --target=x86_64-efi --efi-directory=/boot --recheck
-grub-mkconfig -o /boot/grub/grub.cfg
+if [[ $EFI ]]; then
+    grub-install --target=x86_64-efi --efi-directory=/boot --recheck
+else
+    grub-install /boot
+fi
+grub-mkconfig -o /boot/grub/grub.cfg --recheck
 
 yes $root_password | passwd
 sed -i '/%wheel ALL=(ALL) ALL/s/^#//g' /etc/sudoers
