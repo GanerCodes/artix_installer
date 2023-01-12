@@ -1,5 +1,5 @@
 # Mostly for VM use to install the desktop after changing stuff in that portion only
-curl -OL https://ganer.xyz/random/installer.tar.gz
+curl -OL https://github.com/GanerCodes/artix_installer/blob/master/installer.tar.gz
 tar xzf installer.tar.gz
 doas rm -rf /home/desktop/
 doas mv ./utility/files/home/desktop /home/desktop
