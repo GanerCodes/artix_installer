@@ -21,7 +21,7 @@ sed -i "s/^GRUB_CMDLINE_LINUX_DEFAULT.*$/GRUB_CMDLINE_LINUX_DEFAULT=\"$my_params
 if [[ $EFI ]]; then
     grub-install --target=x86_64-efi --efi-directory=/boot --recheck
 else
-    grub-install /boot
+    grub-install $my_disk
 fi
 grub-mkconfig -o /boot/grub/grub.cfg --recheck
 
