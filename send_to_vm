@@ -2,11 +2,12 @@
 
 set -e && cd "${0%/*}"
 
-dir="/run/user/1000/kio-fuse-bETBEZ/smb/root@192.168.1.44/Gentoo/personal/rust_website/files/random"
+#todo make server path oiasjdo[iajdsj]
+dir="/run/user/1000/kio-fuse-ZoPUqV/smb/root@192.168.1.44/Gentoo/personal/rust_website/files/random"
 name="installer.tar.gz"
 
 tar -czf $name ./utility
 dest="$dir/$name"
 
-rm "$dest"
+rm "$dest" || :
 mv $name "$dest"

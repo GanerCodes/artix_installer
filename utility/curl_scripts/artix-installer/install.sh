@@ -1,23 +1,8 @@
 #!/bin/sh -e
-#
-# A simple installer for Artix Linux
-#
-# Copyright (c) 2022 Maxwell Anderson
-#
-# This file is part of artix-installer.
-#
-# artix-installer is free software: you can redistribute it and/or modify it
-# under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#
-# artix-installer is distributed in the hope that it will be useful, but
-# WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
-# General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with artix-installer. If not, see <https://www.gnu.org/licenses/>.
+# https://github.com/Zaechus/artix-installer
+
+sudo loadkeys us
+[[ ! -d /sys/firmware/efi ]] && printf "Not booted in UEFI mode. Aborting..." && exit 1
 
 confirm_password () {
     local pass1="a"
@@ -31,88 +16,46 @@ confirm_password () {
     echo $pass2
 }
 
-# Load keymap
-sudo loadkeys us
-
-# Check boot mode
-[[ ! -d /sys/firmware/efi ]] && printf "Not booted in UEFI mode. Aborting..." && exit 1
-
-# Init system
-my_init="openrc"
-
-# Choose disk
 while :
 do
     sudo fdisk -l
     printf "\nDisk to install to (e.g. /dev/sda): " && read my_disk
     [[ -b $my_disk ]] && break
 done
-
-part1="$my_disk"1
-part2="$my_disk"2
-part3="$my_disk"3
 if [[ $my_disk == *"nvme"* ]]; then
-    part1="$my_disk"p1
-    part2="$my_disk"p2
-    part3="$my_disk"p3
+    boot_part="$my_disk"p1
+    swap_part="$my_disk"p2
+    root_part="$my_disk"p3
+else
+    boot_part="$my_disk"1
+    swap_part="$my_disk"2
+    root_part="$my_disk"3
 fi
 
-# Swap size
 until [[ $swap_size =~ ^[0-9]+$ && (($swap_size -gt 0)) && (($swap_size -lt 97)) ]]; do
     printf "Size of swap partition in GiB (4): " && read swap_size
     [[ ! $swap_size ]] && swap_size=4
 done
 
-# Filesystem
-my_fs="ext4"
-
-root_part=$part3
-[[ $my_fs == "ext4" ]] && root_part=$part2
-
-# Encrypt or not
 printf "Encrypt? (y/N): " && read encrypted
 [[ ! $encrypted ]] && encrypted="n"
+[[ $encrypted == "y" ]] && cryptpass=$(confirm_password "encryption password")
 
-my_root="/dev/mapper/root"
-my_swap="/dev/mapper/swap"
-if [[ $encrypted == "y" ]]; then
-    cryptpass=$(confirm_password "encryption password")
-else
-    my_root=$part3
-    my_swap=$part2
-    [[ $my_fs == "ext4" ]] && my_root=$part2
-fi
-[[ $my_fs == "ext4" ]] && my_swap="/dev/MyVolGrp/swap"
+root_password=$(confirm_password "root password")
 
-# Timezone
 until [[ -f /usr/share/zoneinfo/$region_city ]]; do
     printf "Region/City (e.g. 'America/Chicago'): " && read region_city
     [[ ! $region_city ]] && region_city="America/Chicago"
 done
 
-# Host
-my_hostname="server"
-
-# Users
-root_password=$(confirm_password "root password")
-
 installvars () {
-    echo my_init=$my_init my_disk=$my_disk part1=$part1 part2=$part2 part3=$part3 \
-        swap_size=$swap_size my_fs=$my_fs root_part=$root_part encrypted=$encrypted my_root=$my_root my_swap=$my_swap \
-        region_city=$region_city my_hostname=$my_hostname \
-        cryptpass=$cryptpass root_password=$root_password
+    echo my_disk=$my_disk swap_size=$swap_size boot_part=$boot_part swap_part=$swap_part root_part=$root_part encrypted=$encrypted region_city=$region_city cryptpass=$cryptpass root_password=$root_password
 }
 
-printf "\nDone with configuration. Installing...\n\n"
+sudo $(installvars) sh ./installer.sh
+sudo cp ./chroot.sh /mnt/artix/root/
+sudo $(installvars) artix-chroot /mnt/artix /bin/bash -c 'sh /root/chroot.sh; rm /root/chroot.sh; exit'
 
-# Install
-sudo $(installvars) sh src/installer.sh
-
-# Chroot
-sudo cp src/iamchroot.sh /mnt/root/ && \
-    sudo $(installvars) artix-chroot /mnt /bin/bash -c 'sh /root/iamchroot.sh; rm /root/iamchroot.sh; exit' && \
-    printf '\n`sudo artix-chroot /mnt /bin/bash` back into the system to make any final changes.\n\nYou may now poweroff.\n'
-
-echo "Rebooting in 3 seconds..."
+echo "Done. Rebooting in 3 seconds..."
 sleep 3
 sudo reboot

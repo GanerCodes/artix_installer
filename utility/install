@@ -12,7 +12,7 @@ cp -r ./files/* /
 curl https://gitea.artixlinux.org/packagesA/artix-mirrorlist/raw/branch/master/trunk/mirrorlist -Lo /etc/pacman.d/mirrorlist
 (sed 's/#//g' <(grep Server <(curl "https://archlinux.org/mirrorlist/?country=US&protocol=http&protocol=https&ip_version=4&use_mirror_status=on"))) > /etc/pacman.d/mirrorlist-arch
 pacman --noconfirm -R sudo
-pacman --noconfirm --disable-download-timeout -Syu artix-archlinux-support zip unzip nano tmux man sshpass git doas tree xonsh openssh openssh-openrc wget docker mlocate docker-compose docker-openrc
+pacman --noconfirm --disable-download-timeout -Syu artix-archlinux-support zip unzip nano tmux man sshpass git doas tree xonsh openssh openssh-openrc wget docker mlocate docker-compose docker-openrc btop
 pacman-key --populate artix
 pacman-key --populate archlinux
 ln -s /bin/doas /bin/sudo
@@ -20,6 +20,7 @@ ln -s /bin/doas /bin/sudo
 echo "permit nopass keepenv :wheel" > /etc/doas.conf
 usermod -a -G wheel root
 /root/Scripts/add_user server "$PASSWORD"
+usermod -a -G docker server
 
 chown -R server /home/server
 chgrp -R server /home/server
