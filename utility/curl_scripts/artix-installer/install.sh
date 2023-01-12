@@ -2,7 +2,7 @@
 # https://github.com/Zaechus/artix-installer
 
 sudo loadkeys us
-[[ ! -d /sys/firmware/efi ]] && printf "Not booted in UEFI mode. Aborting..." && exit 1
+# [[ ! -d /sys/firmware/efi ]] && printf "Not booted in UEFI mode. Aborting..." && exit 1
 
 confirm_password () {
     local pass1="a"
