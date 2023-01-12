@@ -1,7 +1,11 @@
 dd if=/dev/zero of=$my_disk bs=512 count=1
-printf ",1G,0x0c,*\n,${swap_size}G,0x82\n,,V\n" | sfdisk $my_disk
 
-mkfs.vfat -F32 $boot_part
+printf ",1G,0x0c,*\n,${swap_size}G,0x82\n,,V\n" | sfdisk $my_disk
+if [[ -d /sys/firmware/efi ]]; then
+    mkfs.vfat -F32 $boot_part
+else    
+    mkfs.vfat -F16 $boot_part
+fi
 mkswap $swap_part
 mkfs.ext4 $root_part
 
