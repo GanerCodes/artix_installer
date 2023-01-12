@@ -23,7 +23,7 @@ if [[ $EFI ]]; then
 else
     grub-install $my_disk
 fi
-grub-mkconfig -o /boot/grub/grub.cfg --recheck
+grub-mkconfig -o /boot/grub/grub.cfg
 
 yes $root_password | passwd
 sed -i '/%wheel ALL=(ALL) ALL/s/^#//g' /etc/sudoers
