@@ -1,0 +1,5 @@
+#!/bin/bash
+
+make clean
+make
+doas make DESTDIR="" PREFIX="/usr" install

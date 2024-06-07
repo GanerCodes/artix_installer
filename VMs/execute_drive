@@ -1,0 +1,38 @@
+#!/bin/bash
+
+set -e && cd "${0%/*}"
+
+drive_folder="artix"
+iso_image="/mnt/cunk/OS_Images/artix-base-openrc-20221017-x86_64.iso"
+extra_args="-cdrom $iso_image"
+
+eth="enp39s0"
+
+set -o xtrace
+
+doas ip link add br0 type bridge || :
+doas ip link set dev $eth down
+doas ip tuntap add mode tap tap0 user $USER
+doas ip link set tap0 master br0
+doas ip link set $eth master br0
+doas ip link set dev $eth up
+doas ip link set dev tap0 up
+./config_internet br0
+doas ip addr flush dev $eth
+
+qemu-system-x86_64 -enable-kvm -monitor stdio \
+        -m 2048 -smp 4 \
+        -bios /usr/share/edk2-ovmf/OVMF_CODE.fd \
+        -vga virtio \
+        -display gtk \
+        -hda "$drive_folder/drive.qcow2" \
+        -netdev tap,id=mynet0,ifname=tap0,script=no,downscript=no \
+        -device virtio-net,netdev=mynet0 $extra_args || echo "QEMU Exited."
+
+doas ip link set dev $eth down
+doas ip link set dev tap0 down
+doas ip link set dev br0 down
+doas ip tuntap del tap0 mode tap || :
+doas ip link set dev br0 down
+doas ip link set $eth nomaster || :
+./config_internet $eth

@@ -1,0 +1,28 @@
+#!/bin/bash
+# To be ran as 'server' user, for some reason
+
+set -e && cd "${0%/*}"
+PASSWORD=$([ "$1" ] && echo "$1" || echo "password")
+
+doas /root/Scripts/add_user desktop $PASSWORD
+doas usermod -a -G video,audio desktop
+
+yes | doas pacman --noconfirm --disable-download-timeout -Syu gnome-themes-extra dbus xorg-xbacklight pulseaudio-alsa pamixer playerctl brave-bin neofetch go xorg libx11 libxft mesa xorg-xbacklight
+paru --noconfirm -S xmousepasteblock-git
+doas chown -R desktop /home/desktop
+doas chgrp -R desktop /home/desktop
+
+doas su desktop $1 << 'EOF'
+cd /home/desktop/Programs/dwm_6_3 && ./make
+cd ../slstatus && ./make
+cd ../dmenu-5.1 && ./make
+cd ../st && ./make
+cd ../ly && ./make
+cd
+EOF
+
+doas rc-update add ly default
+
+echo "Starting Desktop in 3 seconds..."
+sleep 3
+doas su desktop "/home/desktop/Scripts/start_desktop"

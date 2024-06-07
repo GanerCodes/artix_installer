@@ -1,0 +1,22 @@
+#!/bin/bash
+
+export DISPLAY=:0
+export GTK_IM_MODULE=ibus
+export QT_IM_MODULE=ibus
+export XMODIFIERS=@im=ibus
+export GTK_THEME=Adwaita:dark
+
+doas Xorg &
+until xset -q
+do
+  sleep 0.1
+done
+
+ibus-daemon -drxR
+xrdb -merge ~/.Xresources
+
+doas xmousepasteblock &
+xmodmap -e "keysym Control_R = Multi_key"
+doas xbacklight -set 100
+
+dbus-launch --sh-syntax --exit-with-session dwm

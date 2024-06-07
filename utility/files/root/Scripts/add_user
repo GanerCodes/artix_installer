@@ -1,0 +1,10 @@
+if [ "$#" -ne 2 ]; then
+    echo "Usage: $0 username password"
+    exit 1
+fi
+
+NAME=$1
+PASSWORD=$2
+groupadd $NAME
+useradd -g $NAME -G wheel $NAME
+echo "$NAME:$PASSWORD" | chpasswd

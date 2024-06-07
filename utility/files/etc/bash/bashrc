@@ -1,0 +1,12 @@
+[[ ($- != *i*) ]] && return
+set -m
+complete -cf doas
+
+shopt -s checkwinsize
+shopt -s histappend
+
+PS1="\[\033[01;36m\][\u@\h\[\033[01;37m\] \W\[\033[01;36m\]]\$\[\033[00m\] "
+
+for sh in /etc/bash/bashrc.d/.bash* ; do
+        [[ -r ${sh} ]] && source "${sh}"
+done

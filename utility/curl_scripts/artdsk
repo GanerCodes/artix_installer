@@ -1,0 +1,8 @@
+# Mostly for VM use to install the desktop after changing stuff in that portion only
+curl -OL https://github.com/GanerCodes/artix_installer/raw/master/installer.tar.gz
+tar xzf installer.tar.gz
+doas rm -rf /home/desktop/
+doas mv ./utility/files/home/desktop /home/desktop
+rm -r ./utility
+cd /home/desktop/Scripts
+./install_desktop
