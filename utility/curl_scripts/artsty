@@ -1,3 +1,5 @@
+cd /root
+rm -r ./utility || :
 curl -OL https://github.com/GanerCodes/artix_installer/raw/master/installer.tar.gz
 tar xzf installer.tar.gz
 cd utility
