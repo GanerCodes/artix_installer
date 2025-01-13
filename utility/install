@@ -9,7 +9,7 @@ rmmod pcspkr & echo "blacklist pcspkr" > /etc/modprobe.d/nobeep.conf
 rm -r /etc/bash
 cp -r ./files/* /
 
-curl https://gitea.artixlinux.org/packagesA/artix-mirrorlist/raw/branch/master/trunk/mirrorlist -Lo /etc/pacman.d/mirrorlist
+curl https://gitea.artixlinux.org/packages/artix-mirrorlist/raw/branch/master/mirrorlist -Lo /etc/pacman.d/mirrorlist
 (sed 's/#//g' <(grep Server <(curl "https://archlinux.org/mirrorlist/?country=US&protocol=http&protocol=https&ip_version=4&use_mirror_status=on"))) > /etc/pacman.d/mirrorlist-arch
 pacman --noconfirm -R sudo
 pacman --noconfirm --disable-download-timeout -Syu artix-archlinux-support zip unzip nano tmux man sshpass git doas tree xonsh openssh openssh-openrc wget docker mlocate docker-compose docker-openrc btop
