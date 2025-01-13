@@ -1,6 +1,6 @@
 dd if=/dev/zero of=$my_disk bs=512 count=1
 
-printf ",1G,0x0c,*\n,${swap_size}G,0x82\n,,V\n" | sfdisk $my_disk
+printf ",1G,0x0c,*\n,${swap_size}G,0x82\n,,V\n" | sfdisk --force $my_disk
 if [[ $EFI ]]; then
     mkfs.vfat -F32 $boot_part
 else    
