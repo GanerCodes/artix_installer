@@ -51,7 +51,7 @@ case $SHELL in
     ;;
 esac
 
-[ -f $HOME/Scripts/start_desktop ] && exec $HOME/Scripts/start_desktop
+[ -f $HOME/Scripts/start_desktop ] && [ ! -f "/tmp/no" ] && exec $HOME/Scripts/start_desktop
 
 [ -f /etc/xprofile ] && . /etc/xprofile
 [ -f $HOME/.xprofile ] && . $HOME/.xprofile
