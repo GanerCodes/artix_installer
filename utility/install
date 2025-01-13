@@ -25,6 +25,8 @@ usermod -a -G docker server
 chown -R server /home/server
 chgrp -R server /home/server
 
+sed -i 's/EUID == 0/0/g' /usr/bin/makepkg
+
 su server $1 << 'EOF'
 cd /tmp
 git clone https://aur.archlinux.org/paru-bin.git || :
