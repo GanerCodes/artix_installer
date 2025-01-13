@@ -7,7 +7,8 @@ PASSWORD=$([ "$1" ] && echo "$1" || echo "password")
 doas /root/Scripts/add_user desktop $PASSWORD
 doas usermod -a -G video,audio desktop
 
-yes | doas pacman --noconfirm --disable-download-timeout -Syu gnome-themes-extra dbus xorg-xbacklight pulseaudio-alsa pamixer playerctl brave-bin neofetch go xorg libx11 libxft mesa xorg-xbacklight
+yes | doas pacman --noconfirm --disable-download-timeout -Syu gnome-themes-extra dbus xorg-xbacklight pulseaudio-alsa pamixer playerctl neofetch go xorg libx11 libxft mesa xorg-xbacklight
+paru --noconfirm -S brave-bin
 paru --noconfirm -S xmousepasteblock-git
 doas chown -R desktop /home/desktop
 doas chgrp -R desktop /home/desktop
