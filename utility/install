@@ -15,6 +15,7 @@ pacman --noconfirm -Rdd sudo || :
 pacman --noconfirm --disable-download-timeout -Syu artix-archlinux-support zip unzip nano tmux man sshpass git doas tree xonsh openssh openssh-openrc wget docker mlocate docker-compose docker-openrc btop
 pacman-key --populate artix
 pacman-key --populate archlinux
+rm /bin/sudo || :
 ln -s /bin/doas /bin/sudo
 
 echo "permit nopass keepenv :wheel" > /etc/doas.conf
