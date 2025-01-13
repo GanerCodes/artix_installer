@@ -1,5 +1,5 @@
 #!/bin/bash
-# To be ran as 'server' user, for some reason
+# To be ran as 'server' user
 
 set -e && cd "${0%/*}"
 PASSWORD=$([ "$1" ] && echo "$1" || echo "password")

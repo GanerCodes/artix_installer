@@ -16,6 +16,7 @@ pacman --noconfirm --disable-download-timeout -Syu artix-archlinux-support zip u
 pacman-key --populate artix
 pacman-key --populate archlinux
 mv /bin/sudo /usr/bin/sudo /tmp || :
+ln -s /bin/doas /bin/sudo
 
 echo "permit nopass keepenv :wheel" > /etc/doas.conf
 usermod -a -G wheel root
@@ -25,16 +26,15 @@ usermod -a -G docker server
 chown -R server /home/server
 chgrp -R server /home/server
 
-sed -i 's/EUID == 0/0/g' /usr/bin/makepkg
+sed -i's/EUID == 0/0/g' -i's/sudo -k/doas/g' /usr/bin/makepkg
 
-# su server $1 << 'EOF'
+su server $1 << 'EOF'
 cd /tmp
 git clone https://aur.archlinux.org/paru-bin.git || :
 cd paru-bin
 yes | makepkg -si
-# EOF
+EOF
 
-ln -s /bin/doas /bin/sudo
 ssh-keygen -f "/home/server/.ssh/id_rsa" -P ""
 
 rc-update add docker
