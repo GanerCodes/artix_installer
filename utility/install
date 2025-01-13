@@ -27,12 +27,12 @@ chgrp -R server /home/server
 
 sed -i 's/EUID == 0/0/g' /usr/bin/makepkg
 
-su server $1 << 'EOF'
+# su server $1 << 'EOF'
 cd /tmp
 git clone https://aur.archlinux.org/paru-bin.git || :
 cd paru-bin
 yes | makepkg -si
-EOF
+# EOF
 
 ln -s /bin/doas /bin/sudo
 ssh-keygen -f "/home/server/.ssh/id_rsa" -P ""
