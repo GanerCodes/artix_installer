@@ -16,7 +16,6 @@ pacman --noconfirm --disable-download-timeout -Syu artix-archlinux-support zip u
 pacman-key --populate artix
 pacman-key --populate archlinux
 rm /bin/sudo || :
-ln -s /bin/doas /bin/sudo
 
 echo "permit nopass keepenv :wheel" > /etc/doas.conf
 usermod -a -G wheel root
@@ -33,6 +32,7 @@ cd paru-bin
 yes | makepkg -si
 EOF
 
+ln -s /bin/doas /bin/sudo
 ssh-keygen -f "/home/server/.ssh/id_rsa" -P ""
 
 rc-update add docker
