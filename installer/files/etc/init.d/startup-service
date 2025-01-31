@@ -6,7 +6,7 @@ depend() {
 }
 start() {
   ebegin "Starting startup script"
-  /home/admin/Scripts/boot &
+  /home/admin/Configs/Scripts/boot &
   eend $?
 }
 stop() {
