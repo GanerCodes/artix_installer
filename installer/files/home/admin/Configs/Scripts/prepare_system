@@ -17,7 +17,7 @@ expected_user=$([ -f "/etc/artix-release" ] && echo "admin" || echo "ganer")
     usermod -a -G docker admin || :
     chown -R admin /home/admin
     chgrp -R admin /home/admin
-    sed -i's/EUID == 0/0/g' -i's/sudo -k/doas/g' /usr/bin/makepkg || : # 💖
+    sed -i -e 's/EUID == 0/0/g' -e 's/sudo -k/doas/g' `which makepkg` || : # 💖
     
     su admin $1 << 'EOF'
     cd /tmp
