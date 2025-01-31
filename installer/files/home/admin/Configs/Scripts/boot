@@ -1,0 +1,9 @@
+#!/bin/bash
+
+loop_tmux() {
+    tmux new-session -d -s "$1"
+    tmux send-keys -t "$1" "while true; do $2; sleep 1; done" C-m
+}
+
+echo "Within startup script!"
+# connect_ethernet …

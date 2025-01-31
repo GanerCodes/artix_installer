@@ -1,0 +1,47 @@
+#!/bin/bash
+set -e; [[ "$(whoami)" = "ganer" || "$(whoami)" = "admin" || "$(whoami)" = "root" ]] || exit 1
+
+expected_user=$([ -f "/etc/artix-release" ] && echo "admin" || echo "ganer")
+
+[ -f "/etc/artix-release" ] && {
+    curl https://gitea.artixlinux.org/packages/artix-mirrorlist/raw/branch/master/mirrorlist -Lo /etc/pacman.d/mirrorlist
+    (sed 's/#//g' <(grep Server <(curl "https://archlinux.org/mirrorlist/?country=US&protocol=http&protocol=https&ip_version=4&use_mirror_status=on"))) > /etc/pacman.d/mirrorlist-arch
+    pacman --noconfirm -Rdd sudo || :
+    pacman --noconfirm --disable-download-timeout -Syu doas artix-archlinux-support zip unzip nano tmux man sshpass git tree xonsh openssh openssh-openrc wget docker mlocate docker-compose docker-buildx docker-openrc btop
+    pacman-key --populate artix
+    pacman-key --populate archlinux
+    mv /bin/sudo /usr/bin/sudo /tmp || :
+    ln -s /bin/doas /bin/sudo
+    usermod -a -G  wheel root  || :
+    usermod -a -G  wheel admin || :
+    usermod -a -G docker admin || :
+    chown -R admin /home/admin
+    chgrp -R admin /home/admin
+    sed -i's/EUID == 0/0/g' -i's/sudo -k/doas/g' /usr/bin/makepkg || : # 💖
+    
+    su admin $1 << 'EOF'
+    cd /tmp
+    git clone https://aur.archlinux.org/paru-bin.git || :
+    cd paru-bin
+    yes | makepkg -si
+EOF
+    
+    paru --noconfirm --needed -S dtrx bible-kjv || :
+    
+    ssh-keygen -f "/home/admin/.ssh/id_rsa" -P ""
+    
+    rc-update add docker          || :
+    rc-update add sshd            || :
+    rc-update add startup-service || :; } || :
+
+echo "blacklist pcspkr" | doas tee /etc/modprobe.d/nobeep.conf
+
+doas unlink /Configs &>/dev/null || :
+doas unlink /c       &>/dev/null || :
+doas ln -s "/home/$expected_user/Configs" "/Configs"
+doas ln -s "/home/$expected_user/Configs" "/c"
+
+doas unlink "/etc/bash" || rm -r "/etc/bash" || :
+doas ln -s "/c/Shell/Bash" "/etc/bash"
+[ "$(whoami)" = "ganer" ] && { cd /c/X11_Configs ; doas su ganer ./link; }
+exit 0

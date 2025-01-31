@@ -1,0 +1,14 @@
+#!/bin/bash
+
+[ $# -ne 3 ] && {
+   echo "Usage: $0 interface ssid password"
+   exit 1; }
+
+rfkill unblock wifi
+killall wpa_supplicant dhcpcd || :
+ip link set "$1" up
+wpa_passphrase "$2" "$3" > /tmp/wpa_supplicant.conf
+wpa_supplicant -B -i "$1" -c /tmp/wpa_supplicant.conf
+# -Dwext
+sleep 5
+dhcpcd &

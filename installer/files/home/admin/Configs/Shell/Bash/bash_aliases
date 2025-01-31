@@ -1,0 +1,61 @@
+#!/bin/bash
+set -m
+shopt -s expand_aliases
+
+function venv {
+  if [ ! -d "$1" ]; then 
+    python3 -m venv "$1"
+  fi 
+  source "$1/bin/activate"
+  echo "Activated venv \"$1\""
+}
+
+alias ls='ls -Ah --color=auto'
+alias l='ls'
+alias ll='ls -l'
+alias cl='c ; l'
+alias cll='c ; ll'
+alias c='clear'
+alias cx='clear -x'
+alias s='source'
+alias e='exit'
+alias b='cd -'
+alias .='cd ..'
+
+alias grep='grep --color -i'
+alias grp='grep -B4 -A4'
+alias vgrep='grep -v'
+alias gkill='pkill -9 -if'
+alias extract='dtrx'
+alias rand='echo $RANDOM | md5sum | sed -rE "s/[^0-9a-zA-Z]//g"'
+alias nospaces='for f in *\ *; do mv "$f" "${f// /_}"; done'
+
+alias doas='doas '
+alias sudo='doas '
+alias forgor='forgor '
+alias nano='micro'
+alias find='fd'
+alias py='python '
+alias d='/c/Programs/nnn/nnn.sh'
+alias gitpush='git add . && git commit --allow-empty-message -m "" && git push'
+alias gitpull='git pull --recurse-submodules'
+alias gitclone='git clone --recurse-submodules'
+alias network_usage='doas nload -u H -t 250'
+alias ffmpeg='ffmpeg  "-hide_banner"'
+alias ffprobe='ffprobe "-hide_banner"'
+own() { doas chown -R "$USER" "$@"; doas chgrp -R "$USER" "$@"; }
+mkcd() { mkdirs -- "$1"; cd -P -- "$1"; }
+TOPDF() { img2pdf "$@" -o $(basename "$1" .png).pdf; }
+TOPNG() { pdftoppm "$1" -png > "$(basename "$1" .pdf).png"; }
+pip() { python -m pip "$@" --break-system-packages; }
+make_list() { make -qp | awk -F':' '/^[a-zA-Z0-9][^$#\/\t=]*:([^=]|$)/ {split($1,A,/ /);for(i in A)print A[i]}' | sort -u; }
+
+if [ -f "/etc/artix-release" ]; then
+  alias emerge='emerge -j10 -l11'
+  alias system_update='doas emerge -DNug --changed-deps=y --with-bdeps=y --changed-slot=y --keep-going=y @world'
+  alias system_clean='doas emerge --depclean; doas eclean-dist --deep ; doas eclean-pkg --deep'
+  alias system_sync='doas emerge --sync'
+  alias list_packages='equery l "*"'
+elif [ -f "/etc/gentoo-release" ]; then
+  alias system_update='doas pacman --noconfirm -Syu'
+fi

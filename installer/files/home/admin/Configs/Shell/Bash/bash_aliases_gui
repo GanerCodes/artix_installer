@@ -1,0 +1,13 @@
+#!/bin/bash
+shopt -s expand_aliases
+
+🃌() { realpath "${1:-.}" | clip; };
+vs() { vscodium ${1:-.} ${@:2}; }
+vse() { vs $@ ; exit 0; }
+pdf() { nohup $HOME/Programs/Sioyek-x86_64.AppImage "$@" &> /dev/null & }
+alias clip='xclip -rmlastnl -selection clipboard'
+alias qpy='exec qpy'
+alias font="forgor fontforge -nosplash -quiet"
+alias f3d="forgor /home/ganer/Programs/f3d/F3D-2.5.0-Linux-x86_64-raytracing/bin/f3d"
+alias mpv='mpv "--config-dir=/Configs/ProgConf/mpv/"'
+alias mpv_music='mpv --no-video --force-window --profile=music *.mp3 *.m3m *.webm --shuffle'

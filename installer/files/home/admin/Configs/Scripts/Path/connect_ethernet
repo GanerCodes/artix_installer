@@ -1,0 +1,21 @@
+#!/bin/bash
+config_location="/tmp/dhcpcd.conf"
+ip4="${2:-192.168.1.25}"
+gateway="${3:-192.168.1.1}"
+
+killall dhcpcd && sleep 0.5
+
+cat <<EOF > $config_location
+interface $1
+static ip_address=$ip4/24
+static routers=$gateway
+static domain_name_servers=1.1.1.1 1.0.0.1 $gateway
+EOF
+
+cat /Configs/NetConf/resolv.conf | doas tee /etc/resolv.conf
+
+ip addr flush $1
+ip link set dev $1 up
+dhcpcd -b -f "$config_location" -c "" $1
+ip route add default via $gateway dev $1 || :
+ip route add default dev $1

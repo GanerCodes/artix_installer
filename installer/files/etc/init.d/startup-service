@@ -1,0 +1,15 @@
+#!/sbin/openrc-run
+
+depend() {
+  need docker net
+  use logger
+}
+start() {
+  ebegin "Starting startup script"
+  /home/admin/Scripts/boot &
+  eend $?
+}
+stop() {
+  ebegin "Startup script stopped."
+  eend $?
+}

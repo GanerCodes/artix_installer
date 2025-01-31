@@ -1,0 +1,34 @@
+#!/bin/bash
+export PATH="$PATH:/Configs/Scripts/Path:$HOME/Projects/cpy_old/bin:$HOME/.local/bin:$HOME/.local/share/cargo/bin"
+export EDITOR="micro"
+export MICRO_CONFIG_HOME="/Configs/ProgConf/micro"
+
+[[ ($- != *i*) ]] && return
+[[ $(whoami) == "ganer" && $(tty) == "/dev/tty1" ]] && exec doas "/Configs/Autostarts/startup_gui"
+
+HISTFILE="/Configs/Shell/Shell_history/.bash_history"
+HISTSIZE=-1
+HISTFILESIZE=-1
+HISTCONTROL=ignorespace
+PROMPT_COMMAND="history -a"
+
+stty -ixon
+set -o ignoreeof
+set {match-hidden-files,show-all-if-ambiguous,show-all-if-unmodified} on
+shopt -s {no_empty_cmd_completion,checkwinsize,histappend,dotglob,globstar,huponexit,complete_fullquote,cmdhist,autocd,cdspell,dirspell}
+
+complete -cfd {doas,sudo}
+function _all_comp() { COMPREPLY=( $(compgen -f --) ) ; }
+complete -F _all_comp -E
+# function _show_all_comp() { touch /tmp/HI; } # printf -v READLINE_LINE "%s" "$_short" "egg $(compgen -f --)"; } # I HATE BASH
+
+if [ $USER == "ganer" ] || [ $USER == "admin" ]; then
+	PS1='\[\e[38;5;39m\]\w\[\e[38;5;198;1m\] ✝ \[\e[0m\]'
+else
+	PS1='\[\033[01;32m\]\u@\h\[\033[01;34m\] \w ✝\[\033[00m\] '
+fi
+
+DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+source "$DIR/bash_aliases"
+source "$DIR/bash_aliases_gui"
+source "$DIR/bash_aliases_specific"

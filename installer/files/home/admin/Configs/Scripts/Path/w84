@@ -1,0 +1,5 @@
+#!/bin/bash
+
+while ! pgrep -x "$1" > /dev/null; do
+  sleep 0.05
+done

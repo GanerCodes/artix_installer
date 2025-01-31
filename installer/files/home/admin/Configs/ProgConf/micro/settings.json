@@ -1,0 +1,15 @@
+{
+    "*.txt": {
+        "filetype": "python"
+    },
+    "autoclose": false,
+    "colorscheme": "dracula-tc",
+    "keepautoindent": true,
+    "linter": false,
+    "literate": false,
+    "matchbrace": false,
+    "mkparents": true,
+    "softwrap": true,
+    "statusline": false,
+    "sucmd": "doas"
+}

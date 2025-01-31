@@ -1,0 +1,47 @@
+#!/bin/bash
+# Set up internet first!
+
+set -e && cd "${0%/*}"
+PASSWORD=$([ "$1" ] && echo "$1" || echo "password")
+
+rmmod pcspkr & echo "blacklist pcspkr" > /etc/modprobe.d/nobeep.conf
+
+rm -r /etc/bash
+cp -r ./files/* /
+
+curl https://gitea.artixlinux.org/packages/artix-mirrorlist/raw/branch/master/mirrorlist -Lo /etc/pacman.d/mirrorlist
+(sed 's/#//g' <(grep Server <(curl "https://archlinux.org/mirrorlist/?country=US&protocol=http&protocol=https&ip_version=4&use_mirror_status=on"))) > /etc/pacman.d/mirrorlist-arch
+pacman --noconfirm -Rdd sudo || :
+pacman --noconfirm --disable-download-timeout -Syu artix-archlinux-support zip unzip nano tmux man sshpass git doas tree xonsh openssh openssh-openrc wget docker mlocate docker-compose docker-openrc btop bible-kjv
+pacman-key --populate artix
+pacman-key --populate archlinux
+mv /bin/sudo /usr/bin/sudo /tmp || :
+ln -s /bin/doas /bin/sudo
+
+echo "permit nopass keepenv :wheel" > /etc/doas.conf
+usermod -a -G wheel root
+/root/Scripts/add_user server "$PASSWORD"
+usermod -a -G docker server
+
+chown -R server /home/server
+chgrp -R server /home/server
+
+sed -i's/EUID == 0/0/g' -i's/sudo -k/doas/g' /usr/bin/makepkg
+
+su server $1 << 'EOF'
+cd /tmp
+git clone https://aur.archlinux.org/paru-bin.git || :
+cd paru-bin
+yes | makepkg -si
+EOF
+
+ssh-keygen -f "/home/server/.ssh/id_rsa" -P ""
+
+rc-update add docker
+rc-update add sshd
+rc-update add startup-service
+rc-service docker start
+rc-service sshd start
+rc-service startup-service start
+
+su - server

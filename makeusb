@@ -1,0 +1,31 @@
+#!/bin/bash
+set -e && cd "${0%/*}"
+[ "$#" -ne 1 ] && { echo "Usage: $0 /dev/sdX"; exit 1; }
+
+USB_DEVICE="$1"
+ISO_DIR="/mnt/cunk/VMs+OSs/Linux/Artix"
+EXTRA_FILES_DIR="./artix-installer"
+MOUNT_POINT="/mnt/usb"
+
+ISO_FILE=$(ls -t ${ISO_DIR}/*.iso | head -n 1)
+[ ! -f "$ISO_FILE" ] && { echo "No ISO file found in ${ISO_DIR}"; exit 1; }
+
+echo "Using ISO file: $ISO_FILE"
+doas dd if="$ISO_FILE" of="$USB_DEVICE" bs=4M status=progress && sync
+echo "Done writing ISO."
+
+(
+    echo n   # Add a new partition
+    echo p   # Primary partition
+    echo 3   # Partition number (default 1)
+    echo     # First sector (Accept default: 2048)
+    echo +1G # Last sector (+1G creates a 1GB partition)
+    echo w   # Write changes
+) | doas fdisk "$USB_DEVICE"
+doas mkfs.ext4 -F -F "$USB_DEVICE"3
+
+doas mkdir -p "$MOUNT_POINT" || :
+doas mount "$USB_DEVICE"3 "$MOUNT_POINT"
+doas cp -r "$EXTRA_FILES_DIR" "$MOUNT_POINT/"
+doas umount "$MOUNT_POINT"
+doas sync

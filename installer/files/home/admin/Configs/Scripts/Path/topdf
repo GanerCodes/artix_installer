@@ -1,0 +1,47 @@
+☾ <(cat << 'EOF'
+
+⮌ pathlib ⨡ Path as 𝐩
+⮌ sys ⨡ argv as 𝔞
+󰋺(‹peggle2›, ␛Ń, !) ; 󰋺(‹kots›, *)
+
+TMP_DIR = 𝐩("/tmp/topdf_stuff")
+TMP_DIR.mkdir(parents=✓, exist_ok=✓)
+
+⊢ conv_tix(x, out=TMP_DIR / ‹markervillecoolio.pdf›):
+    surround = 󰲡‹𝗻⟦s≔␛`⋅(x∩␛`→🃌+1→⤉3)⟧𝗻⟦x⟧𝗻⟦s⟧𝗻›
+    ⊢ fuz(x):
+        ¿𝐩(x).exists: ↪x
+        $ᴱcurl ⟦x⟧ -o ⟦x≔TMP_DIR/‹⟦2󷸻ᔐ(󱅏)⟧.png›⟧󷹹
+        ↪x
+    x = peggle2(󰦥󰦥󰦥󰦥󰦥
+    main = (grp ∨ nrm=ƨ(esc ∨ ~‹([^␛␛⟦]|\n)+›)+)*
+    grp = 󰆴"⟦" ~‹[^⟧]*› 󰆴"⟧"
+    esc = 󰆴(~‹␛␛›) ~‹.›
+    󰦥󰦥󰦥󰦥󰦥)(∘x).ftrp("nrm"⍭, 󰲡Ń(surround(x.as_txt), e=ℵ(T=✓))) ␛
+                .ftrp("grp"⍭, 󰲡Ń(‹![](⟦fuz(x.as_txt)⟧)›, e=ℵ(T=✓))) ␛
+                .as_txt
+    (T≔‹/tmp/markerville_template.pandoc›, ‹\usepackage{pagecolor} \pagecolor{black} \color{white}›)
+    (f≔‹/tmp/markerville.md›, x)
+    ↪ $ᴾᴱpandoc -H ⟦T⟧ ⟦f⟧ --pdf-engine=xelatex -V mainfont:JuliaMono -V monofont:JuliaMono -V sansfont:JuliaMono -V geometry:margin=0.1in -o ⟦out⟧󷹹
+
+⊢ libre_stupid(f, o):
+    $ᴱln -s ⟦f.resolve⟧ ⟦X ≔ o.parent/‹⟦o.stem⟧⟦f.suffix⟧›⟧󷹹
+    ↪ $ᴾᴱlibreoffice --infilter="Text (encoded):UTF8,,JuliaMono,en-US" --convert-to pdf ⟦X⟧ --outdir ⟦o.parent⟧󷹹
+
+R = []
+aw = []
+∀i,x∈1󷸻𝔞↨:
+    p = 𝐩∘x
+    R.append(o ≔ TMP_DIR/‹⟦i⟧.pdf›)
+    sf = p.suffix₁﹕
+    ¿sf∈    "doc docx"⍭: ƒ = 𝚲$ᴾᴱpandoc ⟦p⟧ -f docx -o ⟦o⟧󷹹
+    ⸘sf∈"txt pptx ppt"⍭: ƒ = 𝚲libre_stupid(p, o)
+    ⸘sf∈         "tix"⍭: ƒ = 𝚲conv_tix(p, o)
+    ⸘sf∈         "pdf"⍭: ƒ = 𝚲$ᴾᴱcp ⟦p⟧ ⟦o⟧󷹹
+    ¡                  : ƒ = 𝚲$ᴾᴱimg2pdf ⟦p⟧ -o ⟦o⟧󷹹
+    aw.append(ƒ)
+aw ᴍ 
+$ᴼᴱpdfunite⟦R⟗␛ ⟧⟦R🃌⟧.cat.pdf󷹹
+
+EOF
+) "$@"
